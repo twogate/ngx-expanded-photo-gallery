@@ -3,7 +3,8 @@ import PhotoSwipe from 'photoswipe';
 import PhotoSwipeUI_Default from 'photoswipe/dist/photoswipe-ui-default';
 
 import { PhotoGalleryConfig } from '../interfaces/config';
-import { GalleryImage, GalleryItem, GalleryOptions } from '../interfaces/photoswipe';
+import { GalleryImage, GalleryItem, ExpandedGalleryOptions, GalleryOptions } from '../interfaces/photoswipe';
+import { ExpandedOptionsService } from '../services/expanded-options.service';
 import { LightboxService } from '../services/lightbox.service';
 
 export const DEFAULT_OPTIONS = {
@@ -27,11 +28,15 @@ export class PhotoGalleryGroupDirective {
   private galleryItems: { [key: string]: GalleryItem } = {};
   private galleryItemIds: Set<string> = new Set<string>();
   private galleryImages: GalleryImage[] = [];
-  @Input('photoGalleryGroup') options: GalleryOptions;
+  @Input('photoGalleryGroup') options: ExpandedGalleryOptions;
   @Output() onPhotoGalleryInit = new EventEmitter();
   @Output() onPhotoGalleryDestroy = new EventEmitter();
 
-  constructor(@Optional() private photoGalleryConfig: PhotoGalleryConfig, private lightboxService: LightboxService) {
+  constructor(
+    @Optional() private photoGalleryConfig: PhotoGalleryConfig,
+    private lightboxService: LightboxService,
+    private expandedOptionsService: ExpandedOptionsService
+  ) {
     this.defaultOptions = { ...DEFAULT_OPTIONS, ...this.photoGalleryConfig?.defaultOptions };
   }
 
@@ -67,7 +72,7 @@ export class PhotoGalleryGroupDirective {
 
     this.galleryImages = [...this.galleryItemIds].map((key) => this.galleryItems[key].image);
     const idx = this.galleryImages.findIndex((image) => image.id === id);
-    const options: GalleryOptions = { ...this.defaultOptions, ...this.options };
+    const options: ExpandedGalleryOptions = { ...this.defaultOptions, ...this.options };
     options.index = idx;
     options.getThumbBoundsFn = (imageIndex: number) => {
       const key = this.galleryImages[imageIndex].id;
@@ -114,6 +119,8 @@ export class PhotoGalleryGroupDirective {
     });
     this.onPhotoGalleryInit.emit();
     this.gallery.init();
+
+    this.expandedOptionsService.initExpandedOptions(this.gallery, options);
   }
 
   private async getSlideDimensions(slide: GalleryImage): Promise<void> {
