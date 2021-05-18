@@ -80,6 +80,8 @@ export interface ExpandedGalleryOptions extends GalleryOptions {
   uniqueButtonEl?: boolean;
   addUniqueButtonElHTMLFn?: (item: any, uniqueButtonEl: any) => boolean;
   uniqueButtonOptions: UniqueButtonOption[];
+  customUiComponent: any;
+  customUiProp: any;
 }
 
 export interface UniqueButtonOption {
