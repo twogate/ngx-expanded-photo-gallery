@@ -47,6 +47,7 @@ export class ExpandedOptionsService {
         uniqueButtonEl.children[i].classList.forEach((className: string) => classes.push(className)));
     classes = new Array(...(new Set(classes)));
 
+    const buttons = [];
     uniqueButtonOptions.forEach((option) => {
       if (classes.includes(`pswp__button--${this.camel2Kebab(option.eventName)}`) || (!option?.text && !option?.image)) {
         return;
@@ -62,9 +63,16 @@ export class ExpandedOptionsService {
       }
       this.renderer.setAttribute(button, 'title', option.title);
       this.renderer.listen(button, 'click', () => {
-        return option?.eventFn();
+        return option?.eventFn(this.gallery, this.lightbox);
       });
       this.renderer.appendChild(uniqueButtonEl, button);
+      buttons.push(button);
+    });
+
+    // on destroy
+    this.gallery.listen('destroy', () => {
+      buttons.forEach((button) => this.renderer.removeChild(uniqueButtonEl, button));
+      this.renderer.setAttribute(uniqueButtonEl, 'class', 'pswp__button--unique');
     });
   }
   private camel2Kebab(camel: string): string {
@@ -82,11 +90,8 @@ export class ExpandedOptionsService {
     let hasCustomUi = false;
     Array.from((new Array(customUiEl.children.length)).keys())
       .forEach((i: number) =>
-        customUiEl.children[i].classList.forEach((className: string) => {
-          if (className === 'pswp__custom-ui') {
-            hasCustomUi = true;
-          }
-        }));
+          hasCustomUi = hasCustomUi || customUiEl.children[i].classList.contains('pswp__custom-ui')
+       );
     if (hasCustomUi) {
       return;
     }
@@ -98,10 +103,25 @@ export class ExpandedOptionsService {
       customUiComponentRef.instance.someProp = customUiProp;
     }
     customUiComponentRef.instance.pswp = this.gallery;
+    customUiComponentRef.instance.lightbox = this.lightbox;
     this.applicationRef.attachView(customUiComponentRef.hostView);
     this.renderer.addClass(customUiComponentRef.location.nativeElement, 'pswp__custom-ui');
     this.renderer.appendChild(customUiEl, customUiComponentRef.location.nativeElement);
+
     this.gallery.invalidateCurrItems();
     this.gallery.updateSize(true);
+
+    const captionCenterEls: HTMLCollectionOf<Element> = this.lightbox.getElementsByClassName('pswp__caption__center');
+    Array.from((new Array(captionCenterEls.length)).keys())
+      .forEach((i: number) => this.renderer.setStyle(captionCenterEls[i], 'display', 'none'));
+    const captionEl = this.lightbox.getElementsByClassName('pswp__caption pswp__caption--empty')[0];
+    this.renderer.addClass(captionEl, 'pswp__caption--has-custom-ui');
+    this.renderer.removeClass(captionEl, 'pswp__caption--empty');
+
+    // on destroy
+    this.gallery.listen('destroy', () => {
+      this.renderer.removeChild(customUiEl, customUiComponentRef.location.nativeElement);
+      this.renderer.setAttribute(customUiEl, 'class', 'pswp__caption__center--custom');
+    });
   }
 }

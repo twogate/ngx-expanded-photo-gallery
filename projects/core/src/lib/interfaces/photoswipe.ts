@@ -78,7 +78,6 @@ export interface GalleryOptions {
 
 export interface ExpandedGalleryOptions extends GalleryOptions {
   uniqueButtonEl?: boolean;
-  addUniqueButtonElHTMLFn?: (item: any, uniqueButtonEl: any) => boolean;
   uniqueButtonOptions: UniqueButtonOption[];
   customUiComponent: any;
   customUiProp: any;
@@ -89,5 +88,5 @@ export interface UniqueButtonOption {
   text?: string;
   image?: string;
   eventName: string;
-  eventFn?: (event: any) => void;
+  eventFn?: (gallery: any, lightbox: HTMLElement) => void;
 }

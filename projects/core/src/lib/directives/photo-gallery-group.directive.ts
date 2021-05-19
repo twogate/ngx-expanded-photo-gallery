@@ -117,9 +117,11 @@ export class PhotoGalleryGroupDirective {
     this.gallery.listen('destroy', () => {
       this.onPhotoGalleryDestroy.emit();
     });
-    this.expandedOptionsService.initExpandedOptions(this.gallery, options);
+
     this.onPhotoGalleryInit.emit();
     this.gallery.init();
+
+    this.expandedOptionsService.initExpandedOptions(this.gallery, options);
   }
 
   private async getSlideDimensions(slide: GalleryImage): Promise<void> {
