@@ -29,21 +29,13 @@ export class ExpandedOptionsService {
   }
 
   private initUniqueButtonEl(hasUniqueButtonEl: boolean, uniqueButtonOptions: UniqueButtonOption[])  {
-    const uniqueButtonElHTML: Element = this.lightbox.getElementsByClassName('pswp__button--unique')[0];
-    if (!hasUniqueButtonEl || !uniqueButtonOptions.length || !uniqueButtonElHTML) {
+    const uniqueButtonEl: Element = this.lightbox.getElementsByClassName('pswp__button--unique')[0];
+    if (!hasUniqueButtonEl || !uniqueButtonOptions.length || !uniqueButtonEl) {
       return;
     }
 
-    let classes: string[] = [];
-    Array.from((new Array(uniqueButtonElHTML.children.length)).keys())
-      .forEach((i: number) =>
-        uniqueButtonElHTML.children[i].classList.forEach((className: string) => classes.push(className)));
-    classes = new Array(...(new Set(classes)));
-
+    const buttons = [];
     uniqueButtonOptions.forEach((option) => {
-      if (classes.includes(`pswp__button--${this.camel2Kebab(option.eventName)}`) || (!option?.text && !option?.image)) {
-        return;
-      }
       const button = this.renderer.createElement('button');
       this.renderer.addClass(button, 'pswp__button');
       this.renderer.addClass(button, `pswp__button--${this.camel2Kebab(option.eventName)}`);
@@ -54,8 +46,16 @@ export class ExpandedOptionsService {
         this.renderer.appendChild(button, this.renderer.createText(option.text));
       }
       this.renderer.setAttribute(button, 'title', option.title);
-      this.renderer.listen(button, 'click', option?.eventFn || (() => {}));
-      this.renderer.appendChild(uniqueButtonElHTML, button);
+      this.renderer.listen(button, 'click', () => {
+        return option?.eventFn && option?.eventFn(null);
+      });
+      this.renderer.appendChild(uniqueButtonEl, button);
+      buttons.push(button);
+    });
+
+    // onDestroy
+    this.gallery.listen('destroy', () => {
+      buttons.forEach((button) => this.renderer.removeChild(uniqueButtonEl, button));
     });
   }
   private camel2Kebab(camel: string): string {
