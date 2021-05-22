@@ -66,8 +66,7 @@
     padding: 0 16px;
     top: 16px;
   }
-  .pswp__button,
-  .pswp__button--unique * {
+  .pswp__button {
     background-size: 180px 60px;
     height: $toolbar-height;
     margin-left: 8px;
@@ -121,7 +120,7 @@
   .pswp__button--unique {
     height: $toolbar-height;
     min-width: calc(#{$toolbar-height} + 8px);
-    * {
+    .pswp__button {
       background-position: center;
       background-repeat: no-repeat;
       background-size: 60%;
