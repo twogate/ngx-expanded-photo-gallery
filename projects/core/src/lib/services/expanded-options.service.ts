@@ -47,7 +47,7 @@ export class ExpandedOptionsService {
       }
       this.renderer.setAttribute(button, 'title', option.title);
       this.renderer.listen(button, 'click', () => {
-        return option?.eventFn && option?.eventFn(null);
+        return option?.eventFn && option?.eventFn(this.gallery, this.lightbox);
       });
       this.renderer.appendChild(uniqueButtonEl, button);
       buttons.push(button);
