@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
+import { PhotoGalleryModule } from '@twogate/ngx-expanded-photo-gallery';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';

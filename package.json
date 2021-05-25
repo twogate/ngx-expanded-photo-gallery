@@ -1,5 +1,5 @@
 {
-  "name": "ngx-photo-gallery",
+  "name": "ngx-expanded-photo-gallery",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
