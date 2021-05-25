@@ -75,3 +75,16 @@ export interface GalleryOptions {
   getTextForShare?: (shareButtonData: GalleryShareButton[]) => string;
   parseShareButtonOut?: (shareButtonData: GalleryShareButton[], shareButtonOut: string) => string;
 }
+
+export interface ExpandedGalleryOptions extends GalleryOptions {
+  uniqueButtonEl?: boolean;
+  uniqueButtonOptions: UniqueButtonOption[];
+}
+
+export interface UniqueButtonOption {
+  title: string;
+  text?: string;
+  image?: string;
+  eventName: string;
+  eventFn?: (pswp: any, lightbox: HTMLElement) => void;
+}
