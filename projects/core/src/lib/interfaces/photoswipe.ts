@@ -11,6 +11,7 @@ export interface GalleryItem {
   id: string;
   element: HTMLElement;
   image: GalleryImage;
+  data?: any; // passed data
 }
 
 export interface GalleryShareButton {
