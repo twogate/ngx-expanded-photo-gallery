@@ -9,6 +9,7 @@ export class PhotoGalleryDirective implements AfterContentInit, OnDestroy {
   @Input('photoGallery') imageUrl: string;
   @Input() photoGalleryTrackBy: string;
   @Input() photoGalleryCaption: string;
+  @Input() photoGalleryItem: any;
   id: string;
 
   constructor(private el: ElementRef, private photoGalleryGroup: PhotoGalleryGroupDirective) {}
@@ -20,6 +21,7 @@ export class PhotoGalleryDirective implements AfterContentInit, OnDestroy {
       element: this.el.nativeElement as HTMLElement,
       imageUrl: this.imageUrl,
       caption: this.photoGalleryCaption,
+      data: this.photoGalleryItem,
     });
   }
 

@@ -29,8 +29,9 @@ export class PhotoGalleryGroupDirective {
   private galleryItemIds: Set<string> = new Set<string>();
   private galleryImages: GalleryImage[] = [];
   @Input('photoGalleryGroup') options: ExpandedGalleryOptions;
-  @Output() onPhotoGalleryInit = new EventEmitter();
-  @Output() onPhotoGalleryDestroy = new EventEmitter();
+  @Output() onPhotoGalleryInit: EventEmitter<PhotoSwipe> = new EventEmitter<PhotoSwipe>();
+  @Output() onPhotoGalleryChange: EventEmitter<GalleryItem> = new EventEmitter<GalleryItem>();
+  @Output() onPhotoGalleryDestroy: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     @Optional() private photoGalleryConfig: PhotoGalleryConfig,
@@ -40,7 +41,7 @@ export class PhotoGalleryGroupDirective {
     this.defaultOptions = { ...DEFAULT_OPTIONS, ...this.photoGalleryConfig?.defaultOptions };
   }
 
-  registerGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string }): void {
+  registerGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): void {
     const image: GalleryImage = {
       id: item.id,
       src: item.imageUrl,
@@ -53,6 +54,7 @@ export class PhotoGalleryGroupDirective {
       id: item.id,
       element: item.element,
       image,
+      ...(item.data ? { data: item.data }: {}),
     };
 
     this.galleryItemIds.add(item.id);
@@ -116,6 +118,9 @@ export class PhotoGalleryGroupDirective {
     });
     this.gallery.listen('destroy', () => {
       this.onPhotoGalleryDestroy.emit();
+    });
+    this.gallery.listen('afterChange', () => {
+      this.onPhotoGalleryChange.emit(this.galleryItems[this.gallery.currItem.id]);
     });
 
     this.expandedOptionsService.initExpandedOptions(this.gallery, options);
