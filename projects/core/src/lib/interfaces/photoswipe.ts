@@ -79,7 +79,7 @@ export interface GalleryOptions {
 
 export interface ExpandedGalleryOptions extends GalleryOptions {
   uniqueButtonEl?: boolean;
-  uniqueButtonOptions: UniqueButtonOption[];
+  uniqueButtonOptions?: UniqueButtonOption[];
 }
 
 export interface UniqueButtonOption {
