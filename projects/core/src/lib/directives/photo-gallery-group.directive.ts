@@ -42,22 +42,17 @@ export class PhotoGalleryGroupDirective {
   }
 
   registerGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): void {
-    const image: GalleryImage = {
-      id: item.id,
-      src: item.imageUrl,
-      ...(item.caption ? { title: item.caption } : {}),
-      w: 0,
-      h: 0,
-      doGetSlideDimensions: true,
-    };
+    this.updateGalleryItem(item);
+    this.galleryItemIds.add(item.id);
+  }
+
+  updateGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): void {
     this.galleryItems[item.id] = {
       id: item.id,
       element: item.element,
-      image,
+      image: this.convertToGalleryImage(item),
       ...(item.data ? { data: item.data }: {}),
     };
-
-    this.galleryItemIds.add(item.id);
   }
 
   unregisterGalleryItem(id: string): void {
@@ -143,6 +138,17 @@ export class PhotoGalleryGroupDirective {
 
     this.gallery.invalidateCurrItems();
     this.gallery.updateSize(true);
+  }
+
+  private convertToGalleryImage(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): GalleryImage {
+    return {
+      id: item.id,
+      src: item.imageUrl,
+      ...(item.caption ? { title: item.caption } : {}),
+      w: 0,
+      h: 0,
+      doGetSlideDimensions: true,
+    } as GalleryImage;
   }
 }
 
