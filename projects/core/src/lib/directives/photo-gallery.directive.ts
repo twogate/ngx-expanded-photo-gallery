@@ -34,6 +34,11 @@ export class PhotoGalleryDirective implements AfterContentInit, OnChanges, OnDes
 
   constructor(private el: ElementRef, private photoGalleryGroup: PhotoGalleryGroupDirective) {}
 
+  @HostListener('click')
+  async openPhotoSwipe(): Promise<void> {
+    await this.photoGalleryGroup.openPhotoSwipe(this.id);
+  }
+
   ngAfterContentInit(): void {
     this.id = this.photoGalleryTrackBy || this.imageUrl;
     this.photoGalleryGroup.registerGalleryItem(this.getGalleryItem);
@@ -48,10 +53,5 @@ export class PhotoGalleryDirective implements AfterContentInit, OnChanges, OnDes
 
   ngOnDestroy(): void {
     this.photoGalleryGroup.unregisterGalleryItem(this.id);
-  }
-
-  @HostListener('click')
-  async openPhotoSwipe(): Promise<void> {
-    await this.photoGalleryGroup.openPhotoSwipe(this.id);
   }
 }

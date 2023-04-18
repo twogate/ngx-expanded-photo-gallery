@@ -23,15 +23,16 @@ export const DEFAULT_OPTIONS = {
   selector: '[photoGalleryGroup]',
 })
 export class PhotoGalleryGroupDirective {
+  @Input('photoGalleryGroup') options: ExpandedGalleryOptions;
+  @Output() onPhotoGalleryInit = new EventEmitter();
+  @Output() onPhotoGalleryChange: EventEmitter<GalleryItem> = new EventEmitter<GalleryItem>();
+  @Output() onPhotoGalleryDestroy = new EventEmitter<void>();
+
   private defaultOptions: GalleryOptions;
   private gallery: any;
   private galleryItems: { [key: string]: GalleryItem } = {};
   private galleryItemIds: Set<string> = new Set<string>();
   private galleryImages: GalleryImage[] = [];
-  @Input('photoGalleryGroup') options: ExpandedGalleryOptions;
-  @Output() onPhotoGalleryInit: EventEmitter<PhotoSwipe> = new EventEmitter<PhotoSwipe>();
-  @Output() onPhotoGalleryChange: EventEmitter<GalleryItem> = new EventEmitter<GalleryItem>();
-  @Output() onPhotoGalleryDestroy: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     @Optional() private photoGalleryConfig: PhotoGalleryConfig,
@@ -41,17 +42,23 @@ export class PhotoGalleryGroupDirective {
     this.defaultOptions = { ...DEFAULT_OPTIONS, ...this.photoGalleryConfig?.defaultOptions };
   }
 
-  registerGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): void {
+  registerGalleryItem(item: {
+    id: string;
+    element: HTMLElement;
+    imageUrl: string;
+    caption?: string;
+    data?: any;
+  }): void {
     this.updateGalleryItem(item);
     this.galleryItemIds.add(item.id);
   }
 
-  updateGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): void {
+  updateGalleryItem(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string; data?: any }): void {
     this.galleryItems[item.id] = {
       id: item.id,
       element: item.element,
       image: this.convertToGalleryImage(item),
-      ...(item.data ? { data: item.data }: {}),
+      ...(item.data ? { data: item.data } : {}),
     };
   }
 
@@ -60,6 +67,8 @@ export class PhotoGalleryGroupDirective {
   }
 
   async openPhotoSwipe(id: string): Promise<void> {
+    this.lightboxService.create();
+
     if (this.galleryItems[id].image.doGetSlideDimensions) {
       const targetImage = await loadImage(this.galleryItems[id].image.src);
       this.galleryItems[id].image.w = targetImage.naturalWidth;
@@ -99,19 +108,20 @@ export class PhotoGalleryGroupDirective {
     const photoSwipe = this.lightboxService.getLightboxElement();
 
     this.gallery = new PhotoSwipe(photoSwipe, PhotoSwipeUI_Default, this.galleryImages, options);
-    this.gallery.listen('gettingData', (_, slide) => {
+    this.gallery.listen('gettingData', (_, slide: GalleryImage) => {
       if (slide.doGetSlideDimensions) {
         setTimeout(async () => {
           await this.getSlideDimensions(slide);
         }, 300);
       }
     });
-    this.gallery.listen('imageLoadComplete', async (_, slide) => {
+    this.gallery.listen('imageLoadComplete', async (_, slide: GalleryImage) => {
       if (slide.doGetSlideDimensions) {
         await this.getSlideDimensions(slide);
       }
     });
     this.gallery.listen('destroy', () => {
+      this.lightboxService.destroy();
       this.onPhotoGalleryDestroy.emit();
     });
     this.gallery.listen('afterChange', () => {
@@ -140,7 +150,13 @@ export class PhotoGalleryGroupDirective {
     this.gallery.updateSize(true);
   }
 
-  private convertToGalleryImage(item: { id: string; element: HTMLElement; imageUrl: string; caption?: string, data?: any }): GalleryImage {
+  private convertToGalleryImage(item: {
+    id: string;
+    element: HTMLElement;
+    imageUrl: string;
+    caption?: string;
+    data?: any;
+  }): GalleryImage {
     return {
       id: item.id,
       src: item.imageUrl,
