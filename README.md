@@ -1,5 +1,13 @@
 # ngx-expanded-photo-gallery
 
+This package was created by forking @twogate/ngx-photo-gallery to add the following features.
+
+- Display any button or description during gallery display.
+
+The following is the README.md of the forked site.
+
+---
+
 PhotoGallery library for Angular based on [PhotoSwipe](http://photoswipe.com/).
 
 ## Installation
