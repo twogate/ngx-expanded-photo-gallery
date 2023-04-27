@@ -3,7 +3,14 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 6,
     sourceType: 'module',
-    project: ['./tsconfig.json', 'projects/core/tsconfig.lib.json', 'projects/core/tsconfig.lib.prod.json', 'projects/core/tsconfig.spec.json', 'projects/demo/tsconfig.app.json', 'projects/demo/tsconfig.spec.json'],
+    project: [
+      './tsconfig.json',
+      'projects/core/tsconfig.lib.json',
+      'projects/core/tsconfig.lib.prod.json',
+      'projects/core/tsconfig.spec.json',
+      'projects/demo/tsconfig.app.json',
+      'projects/demo/tsconfig.spec.json',
+    ],
   },
   rules: {
     '@angular-eslint/component-selector': ['error', { type: 'element', style: 'kebab-case' }],
@@ -94,7 +101,7 @@ module.exports = {
       parser: '@angular-eslint/template-parser',
       plugins: ['@angular-eslint', '@angular-eslint/template'],
       rules: {
-        '@angular-eslint/template/banana-in-a-box': 'error',
+        '@angular-eslint/template/banana-in-box': 'error',
         '@angular-eslint/template/cyclomatic-complexity': 'off',
         '@angular-eslint/template/no-negated-async': 'error',
         '@angular-eslint/template/i18n': 'off',

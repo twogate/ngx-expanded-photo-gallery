@@ -4,6 +4,11 @@ PhotoGallery library for Angular based on [PhotoSwipe](http://photoswipe.com/).
 
 ## Installation
 
+| angular | package version |
+| ------- | --------------- |
+| 15      | 1.4.0           |
+| 13~14   | 1.3.0           |
+
 Install from npm:
 
 ```
